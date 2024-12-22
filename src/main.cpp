@@ -1,54 +1,68 @@
-/*******************************************************************************************
-*
-*   raylib [core] example - Basic window
-*
-*   Welcome to raylib!
-*
-*   To test examples, just press F6 and execute raylib_compile_execute script
-*   Note that compiled executable is placed in the same folder as .c file
-*
-*   You can find all basic examples on C:\raylib\raylib\examples folder or
-*   raylib official webpage: www.raylib.com
-*
-*   Enjoy using raylib. :)
-*
-*   This example has been created using raylib 1.0 (www.raylib.com)
-*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
-*
-*   Copyright (c) 2014 Ramon Santamaria (@raysan5)
-*
-********************************************************************************************/
+#include "raylib.h"
+#include <cstdio>
+#include <iostream>
 
-#include "header.h"
+using namespace std;
 
-int main() {
-    // Initialization
-    //--------------------------------------------------------------------------------------
-    int screenWidth = 800;
-    int screenHeight = 450;
-    raylib::Color textColor = raylib::Color::LightGray();
-    raylib::Window window(screenWidth, screenHeight, "raylib [core] example - basic window");
+Color blue = {0, 0, 255, 255};
+Color green = {173, 204, 96, 255};
+Color darkGreen = {43, 51, 24, 255};
 
-    SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
+int cellSize = 30;
+int cellCount = 25;
 
-    // Main game loop
-    while (!window.ShouldClose()) {   // Detect window close button or ESC key
-        // Update
-        //----------------------------------------------------------------------------------
-        // Update your variables here
-        //----------------------------------------------------------------------------------
+class Food
+{
+public:
+    Vector2 position;
+    Texture2D texture;
+    Image image;
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-        {
-            window.ClearBackground(RAYWHITE);
-            textColor.DrawText("Congrats! You created your first window!", 190, 200, 20);
-        }
-        EndDrawing();
-        //----------------------------------------------------------------------------------
+    Food()
+    {
+        image = LoadImage("../Graphics/Santa_Hat.png");
+        texture = LoadTextureFromImage(image);
+        position = GenerateRandomPos();
     }
 
+    ~Food()
+    {
+        UnloadTexture(texture);
+        UnloadImage(image);
+    }
+
+    void Draw()
+    {
+        // DrawRectangle(position.x * cellSize, position.y * cellSize, cellSize, cellSize, darkGreen);
+        DrawTexture(texture, position.x * cellSize, position.y * cellSize, WHITE);
+    }
+
+    Vector2 GenerateRandomPos()
+    {
+        float x = GetRandomValue(0, cellCount - 1);
+        float y = GetRandomValue(0, cellCount - 1);
+
+        return Vector2{x, y};
+    }
+};
+
+int main()
+{
+    cout << "Starting the game..." << endl;
+    InitWindow(cellSize * cellCount, cellSize * cellCount, "Christmas Snake");
+    SetTargetFPS(60);
+
+    Food food = Food();
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+
+        // Drawing
+        ClearBackground(green);
+        food.Draw();
+        EndDrawing();
+    }
+    CloseWindow();
     return 0;
 }
